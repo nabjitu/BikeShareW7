@@ -1,0 +1,9 @@
+<component name="libraryTable">
+  <library name="io.realm:realm-transformer:5.0.0@jar">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/io.realm/realm-transformer/5.0.0/ac4777fb812464b4d668245817e9efca8e8d12b1/realm-transformer-5.0.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              tools:context="com.nataliebrammerjensen.bikesharemlk.MainActivity"
+              android:background="@android:color/darker_gray"
+              tools:layout_editor_absoluteX="5dp"
+              tools:layout_editor_absoluteY="4dp">
+
+    <!--  Last ride added -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/last_added_end"
+            android:layout_width="0dp"
+            android:layout_weight="25"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="Last added" />
+
+        <TextView
+            android:id="@+id/last_ride_end"
+            android:layout_width="0dp"
+            android:layout_weight="75"
+            android:layout_height="wrap_content"
+            android:background="@android:color/background_light"
+            android:padding="24dp"
+            android:hint="Last ride" />
+    </LinearLayout>
+
+    <!-- What bike -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_weight="25"
+            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="What bike" />
+
+        <EditText
+            android:id="@+id/what_text_end"
+            android:hint="enter what bike here"
+            android:layout_width="0dp"
+            android:layout_weight="75"            android:layout_height="wrap_content"
+            android:layout_gravity="right"
+            android:background="@android:color/background_light"
+            android:padding="24dp" />
+    </LinearLayout>
+
+    <!-- Where does the ride start -->
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="5dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:id="@+id/where_text_end"
+            android:layout_width="0dp"
+            android:layout_weight="25"            android:layout_height="wrap_content"
+            android:padding="24dp"
+            android:text="where?" />
+
+        <EditText
+            android:id="@+id/where_edit_end"
+            android:layout_width="0dp"
+            android:layout_weight="75"            android:layout_height="wrap_content"
+            android:background="@android:color/background_light"
+            android:hint="enter where here"
+            android:padding="24dp" />
+
+    </LinearLayout>
+
+    <!-- Button to add ride-->
+
+    <Button
+        android:id="@+id/add_button_end"
+        android:layout_width="200dp"
+        android:layout_height="80dp"
+        android:layout_gravity = "center"
+        android:background="@android:color/holo_red_dark"
+        android:padding="24dp"
+        android:text="End ride" />
+
+</LinearLayout>
