@@ -5,15 +5,13 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.app.FragmentManager;
 
-import com.nataliebrammerjensen.bikesharemlk.database.RidesDB;
-
 /**
  * Created by nataliebrammerjensen on 04/04/2018.
  */
 
 public class BikeShareActivityRidesBrowser extends FragmentActivity {
 
-    private static RidesDB sharedRides;
+    private static RealmDBStuff sharedRides;
 
     private FragmentManager fm= getSupportFragmentManager();
 
@@ -21,7 +19,7 @@ public class BikeShareActivityRidesBrowser extends FragmentActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_bike_share_rb);
-        sharedRides = RidesDB.get(this);
+       // sharedRides = new RealmDBStuff();
 
         Fragment fragment= fm.findFragmentById(R.id.fragment_list_container);
         if (fragment == null) {

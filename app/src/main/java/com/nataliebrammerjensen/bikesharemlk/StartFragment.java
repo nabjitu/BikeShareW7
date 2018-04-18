@@ -1,9 +1,6 @@
 package com.nataliebrammerjensen.bikesharemlk;
 
 import android.content.Context;
-import android.content.Intent;
-import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,14 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.nataliebrammerjensen.bikesharemlk.database.Ride;
-import com.nataliebrammerjensen.bikesharemlk.database.RideCursorWrapper;
-import com.nataliebrammerjensen.bikesharemlk.database.RidesDB;
-
-import java.util.UUID;
 
 import io.realm.Realm;
-
-import static android.app.Activity.RESULT_OK;
 
 /**
  * Created by nataliebrammerjensen on 21/02/2018.
@@ -30,16 +21,18 @@ public class StartFragment extends Fragment {
     private Button addRide;
     private TextView lastAdded;
     private TextView newWhat, newWhere;
-    private Ride last = new Ride("", "", "", "");
-    Realm realm;
+
+    private Ride last = new Ride("", "", "", 0);
+
+    RealmDBStuff realm;
+    //RealmDBStuff rdb = new RealmDBStuff();
 
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        realm=RealmDBStuff.get(getActivity().getApplicationContext());
 
-        Realm.init(getActivity().getApplicationContext());
-        realm = Realm.getDefaultInstance();
     }
 
     @Override
@@ -66,11 +59,16 @@ public class StartFragment extends Fragment {
 
                     //Isetdet for HFM
                     //add til databasen og i main activty set current til den sidst addede i databasen.
-                    Ride newRide = new Ride (newWhat.getText().toString().trim(), newWhere.getText().toString().trim(), "", "");
+                    Ride newRide = new Ride (newWhat.getText().toString().trim(), newWhere.getText().toString().trim(), "", 0);
 
-                    //RidesDB rdb = RidesDB.get(getContext());
-                    //rdb.addRide(newRide);
-                    RealmDBStuff.writeRideToDB(realm, newRide);
+
+                    realm.writeRideToDB( newRide);
+
+                    //HFM
+                    /*Intent data=new Intent();
+                    //data.setData(Uri.parse(last.toStringStart()));
+                    data.setData(Uri.parse(newRide.getId().toString()));
+                    getActivity().setResult(RESULT_OK, data);*/
 
                     // reset text fields
                     newWhat.setText(""); newWhere.setText("");
@@ -86,12 +84,11 @@ public class StartFragment extends Fragment {
 
     private void updateUI(){
         //Get last added Ride
-        Context context = getActivity().getApplicationContext();
-        RidesDB rdb = RidesDB.get(context);
-        Ride newRide = rdb.getlastAdded(getActivity());
+
+        /*Ride newRide = rdb.getlastAdded(getActivity());
 
         //Set textview
-        lastAdded.setText(newRide.getMbikeName() + " went from " + newRide.getMstartRide());
+        lastAdded.setText(newRide.getMbikeName() + " went from " + newRide.getMstartRide());*/
     }
 
 

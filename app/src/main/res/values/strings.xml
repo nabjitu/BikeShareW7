@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">BikeShareMLK</string>
+    <string name="bike_location_label">Location: </string>
+    <string name="bike_name_label">Name</string>
 </resources>

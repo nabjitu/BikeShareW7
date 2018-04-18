@@ -1,8 +1,6 @@
 package com.nataliebrammerjensen.bikesharemlk;
 
 import android.content.Context;
-import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -12,7 +10,8 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.nataliebrammerjensen.bikesharemlk.database.Ride;
-import com.nataliebrammerjensen.bikesharemlk.database.RidesDB;
+
+import io.realm.Realm;
 
 /**
  * Created by nataliebrammerjensen on 02/03/2018.
@@ -25,7 +24,9 @@ public class EndFragment extends Fragment {
     private TextView lastAdded;
     private TextView newWhat, newWhere;
 
-    private Ride last= new Ride("", "", "", "");
+    private Ride last= new Ride("", "", "", 0);
+
+    RealmDBStuff realm;
 
     //tags
     private static final String EXTRA_RIDES_DB = "com.bignerdranch.android.geoquiz.rides_DB";
@@ -33,6 +34,7 @@ public class EndFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        realm = RealmDBStuff.get(getActivity().getApplicationContext());
     }
 
     @Override
@@ -49,8 +51,7 @@ public class EndFragment extends Fragment {
         newWhat = (TextView) v.findViewById(R.id.what_text_end);
         newWhere = (TextView) v.findViewById(R.id.where_edit_end);
 
-        RidesDB rdb = RidesDB.get(getActivity().getApplicationContext());
-        Ride newRide = rdb.getlastAdded(getActivity());
+        final Ride newRide = realm.getLastAdded();
 
         if (newRide.getMendRide().equals("")) {
             newWhat.setText(newRide.getMbikeName());
@@ -61,10 +62,8 @@ public class EndFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if ((newWhat.getText().length() > 0) && (newWhere.getText().length() > 0)) {
-                    RidesDB rdb = RidesDB.get(getActivity().getApplicationContext());
-                    Ride newRide = rdb.getlastAdded(getActivity());
                     String endValue = newWhere.getText().toString().trim();
-                    rdb.updateLastRide(rdb.getIdOnlastAdded(getActivity()), endValue);
+                    realm.changeData(newRide.getId(), endValue);
 
                     // reset text fields
                     newWhat.setText("");
@@ -80,9 +79,8 @@ public class EndFragment extends Fragment {
 
     private void updateUI(){
         //Get last added Ride
-        Context context = getActivity().getApplicationContext();
-        RidesDB rdb = RidesDB.get(context);
-        Ride newRide = rdb.getlastAdded(getActivity());
+
+        Ride newRide = realm.getLastAdded();
 
         //Set textview
         lastAdded.setText(newRide.getMbikeName() + " went from " + newRide.getMstartRide());

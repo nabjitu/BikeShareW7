@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,25 +13,31 @@ import android.widget.Toast;
 
 
 import com.nataliebrammerjensen.bikesharemlk.database.Ride;
-import com.nataliebrammerjensen.bikesharemlk.database.RidesDB;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 
+import io.realm.Realm;
+
 public class ListFragment extends Fragment implements Observer {
-  private static RidesDB sharedRides;
+  private static RealmDBStuff sharedRides;
 
   //View to list all rides
   private RecyclerView mRidesList;
   private RidesAdapter mAdapter;
 
+  private Realm realm;
+
   @Override
   public void onCreate(Bundle savedInstanceState) {
     super.onCreate(savedInstanceState);
-    sharedRides = RidesDB.get(getActivity());
+    sharedRides = new RealmDBStuff(getActivity().getApplicationContext());
     sharedRides.addObserver(this);
+
+    Realm.init(getActivity().getApplicationContext());
+    realm = Realm.getDefaultInstance();
   }
 
   @Override
@@ -38,12 +45,13 @@ public class ListFragment extends Fragment implements Observer {
     View v= inflater. inflate(R.layout.fragment_list, container, false);
 
     //NEJH
-    /*ArrayList<String> fromStrings = new ArrayList<>();
-    ArrayList<Ride> rides = new ArrayList<>();
+    ArrayList<String> fromStrings = new ArrayList<>();
+
+    ArrayList<Ride> rides = sharedRides.getDataWithoutWhereClause() ;
     for (Ride r : rides){
-      fromStrings.add(r.getMstartRide());
+      Log.d("nat",r.toString());
     }
-    mAdapter = new RidesAdapter(fromStrings);*/
+    mAdapter = new RidesAdapter(rides);
     //NEJH
 
     //JH
@@ -54,15 +62,7 @@ public class ListFragment extends Fragment implements Observer {
     //JH
 
     // TODO set up adapter
-    //Muligvis sådan her
-    //ListRow row = new ListRow(inflater.inflate(R.layout.list_row, parent, false));
-    //View view = row.itemView;
-    //ImageView thumbnailView = row.mThumbnail;
-
-    //mCrimeRecyclerView = (RecyclerView) v.findViewById(R.id.list_recycler_view);
-    //mCrimeRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-    updateUI();
+    //updateUI();
 
     return v;
   }
@@ -84,14 +84,13 @@ public class ListFragment extends Fragment implements Observer {
 
     public Ride mRide;
 
-    public RideHolder(LayoutInflater inflater, ViewGroup parent){
-      super(inflater.inflate(R.layout.list_item, parent, false));
+    public RideHolder(View v){
+      super(v);
 
       //Chap 9
-      itemView.setOnClickListener(this);
+      //itemView.setOnClickListener(this);
 
-      // TODO set views
-      View iv = inflater.inflate(R.layout.list_item, parent, false); //iv = itemView
+
       //Side 182
       //mWhatTextView = (TextView) iv
 
@@ -101,14 +100,14 @@ public class ListFragment extends Fragment implements Observer {
       final String text = tv.getText().toString();*/
 
       //N
-      mWhatTextView = (TextView) iv.findViewById(R.id.what_bike_ride);
-      mFromTextView = (TextView) iv.findViewById(R.id.where_from_ride);
+      mWhatTextView = (TextView) v.findViewById(R.id.what_bike_ride);
+      mFromTextView = (TextView) v.findViewById(R.id.where_from_ride);
       //mToTextView = (TextView) iv.findViewById(R.id.where_to_ride);
       //mDateTextView = (TextView) iv.findViewById(R.id.date_of_ride);
       //mStartTimeTextView = (TextView) iv.findViewById(R.id.time_of_start);
       //mEndTimeTextView = (TextView) iv.findViewById(R.id.time_of_end);
 
-      iv.setOnClickListener(this);
+      v.setOnClickListener(this);
 
     }
 
@@ -126,14 +125,18 @@ public class ListFragment extends Fragment implements Observer {
 
     @Override
     public void onClick(View v) {
-        sharedRides.delete(mRide, getActivity());
+        sharedRides.deleteWhere( mRide.getId());
         //Chap 9
         Toast.makeText(getActivity(), mRide.getMbikeName() + " clicked!", Toast.LENGTH_SHORT).show();
+
+        refresh(this.getAdapterPosition());
     }
   }
 
   private class RidesAdapter extends RecyclerView.Adapter<RideHolder> {
-    private List<Ride> mRides;
+    private  List<Ride> mRides;
+
+
 
     public RidesAdapter(List<Ride> rides){
       mRides= rides;
@@ -143,7 +146,8 @@ public class ListFragment extends Fragment implements Observer {
     @Override
     public RideHolder onCreateViewHolder(ViewGroup parent, int viewType){
       LayoutInflater layoutInflater= LayoutInflater.from(getActivity());
-      return new RideHolder(layoutInflater, parent);
+      View v=layoutInflater.inflate(R.layout.list_item,parent,false);
+      return new RideHolder(v);
      }
 
     @Override
@@ -159,14 +163,19 @@ public class ListFragment extends Fragment implements Observer {
   }
 
   private void updateUI() {
-    RidesDB crimeLab = RidesDB.get(getActivity());
-    List<Ride> crimes = crimeLab.getRidesDB();
-    mAdapter = new RidesAdapter(crimes);
+
+    List<Ride> rides = sharedRides.getDataWithoutWhereClause() ;
+    mAdapter = new RidesAdapter(rides);
     //mCrimeRecyclerView.setAdapter(mAdapter); //Put the adapter on the view.
 
     //Skal måske have notifydatasetchanged
 
     //if crimelab == null log to logcat "it is empty"
+  }
+
+  public void refresh(int pos){
+    mAdapter.mRides.remove(pos);
+    mAdapter.notifyDataSetChanged();
   }
 
 }

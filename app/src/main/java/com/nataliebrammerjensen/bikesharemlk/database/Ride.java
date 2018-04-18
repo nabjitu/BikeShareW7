@@ -15,9 +15,9 @@ public class Ride extends RealmObject {
     private String mendRide;
     private String mStartddmmyyyy;
     private String mStarthhmmss;
-    private String mId;
+    private int mId;
 
-    public Ride(String id) { // mainly for testing
+    public Ride(int id) { // mainly for testing
         mbikeName= null;
         mstartRide= null;
         mId = id;
@@ -27,16 +27,17 @@ public class Ride extends RealmObject {
         mStarthhmmss = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
     }
 
-    public Ride() { // mainly for testing
+    public Ride(){
         mbikeName= null;
         mstartRide= null;
+        mId = 0;
 
         mendRide= null;
         mStartddmmyyyy = new SimpleDateFormat("dd.MM.yyyy").format(new java.util.Date());
         mStarthhmmss = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
     }
 
-    public Ride(String name, String startRide, String endRide, String id) { // mainly for testing
+    public Ride(String name, String startRide, String endRide, int id) { // mainly for testing
         mbikeName= name;
         mstartRide= startRide;
         mId = id;
@@ -45,11 +46,11 @@ public class Ride extends RealmObject {
         mStarthhmmss = new SimpleDateFormat("HH:mm:ss").format(new java.util.Date());
     }
 
-    public void setId(String id) {
+    public void setId(int id) {
         mId = id;
     }
 
-    public String getId() {
+    public int getId() {
         return mId;
     }
 
