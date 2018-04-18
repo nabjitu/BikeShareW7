@@ -72,12 +72,12 @@ public class RegisterUserFragment extends Fragment {
                 //Because I had to initialize price to 0 I have to make sure that it has the given value instead of 0.
                 if(price!= 0){
                     Bike usersBike = new Bike(0, bName, username, bBrand, true, price);
-                    rdb.writeBikeToDb(usersBike);
+                    rdb.writeBikeDataToDb(usersBike.getName(), usersBike.getOwner(), usersBike.getBrand());
                 } else{
                     Toolbox.doToast("v2 Price has to be of type double", getActivity().getApplicationContext());
                 }
 
-                rdb.writeUserToDb(newUser);
+                rdb.writeUserDataToDb(newUser.getUserName(), newUser.getPassword());
                     /*if() {
                         Toolbox.doToast("User was not created", getApplicationContext());
                     }

@@ -3,6 +3,9 @@ package com.nataliebrammerjensen.bikesharemlk;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
@@ -17,7 +20,7 @@ import java.util.List;
 
 import io.realm.Realm;
 
-public class MainActivity extends Activity{ // GUI variables
+public class MainActivity extends AppCompatActivity /*extends Activity*/{ // GUI variables
 
     private static final String TAG = "MainActivity";
 
@@ -41,27 +44,32 @@ public class MainActivity extends Activity{ // GUI variables
     TextView currentRideView;
 
     Realm realm;
+    RealmDBStuff rdb;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout. activity_main);
+        setContentView(R.layout.activity_main);
 
-        Realm.init(getApplicationContext());
+        Realm.init(getApplicationContext()); //Skal måske slettes?
         //realm = Realm.getDefaultInstance();
+        rdb = RealmDBStuff.get(getApplicationContext());
 
         Log.d(TAG, "onCreate(Bundle) called");
 
         //DEbug
-        /*RealmDBStuff rdb = RealmDBStuff.get(getApplicationContext());
+        //rdb.writeToDB("Natalie", "ITU", "");
         ArrayList<Ride> allRides = new ArrayList<>();
-        //allRides = rdb.getDataWithoutWhereClause(realm);
+        allRides = rdb.getDataWithoutWhereClause();
+        System.out.println("AllRides size is: " + allRides.size());
 
         for (Ride r: allRides){
+            System.out.println("AllRides size is: " + allRides.size());
             System.out.println("======NEw Ride ======");
-            System.out.println(r.getMbikeName());
-            System.out.println(r.getId());
-        }*/
+            System.out.println("Bike name is: " + r.getMbikeName());
+            System.out.println("id is: " + r.getId());
+        }
         //DEbug
 
 
@@ -122,13 +130,12 @@ public class MainActivity extends Activity{ // GUI variables
             public void onClick(View v) {
                 /*Intent toy = new Intent(MainActivity.this, EndRideActivity.class);
                 startActivity(toy);*/
-                //populateLIstView();
+                populateLIstView();
             }
         });
     }
 
-   /* public void populateLIstView(){
-        RealmDBStuff rdb = RealmDBStuff.get();
+   public void populateLIstView(){
         ArrayList<Ride> allRides = new ArrayList<>();
         allRides = rdb.getDataWithoutWhereClause();
 
@@ -159,10 +166,10 @@ public class MainActivity extends Activity{ // GUI variables
         ListView buckysListView3 = findViewById(R.id.listView3);
         buckysListView3.setAdapter(buckysAdapter3);
 
-    }*/
+    }
 
     //NDB
-    public void setCrimes(List<Ride> rides) {
+   public void setCrimes(List<Ride> rides) {
         mRides = rides;
     }
 

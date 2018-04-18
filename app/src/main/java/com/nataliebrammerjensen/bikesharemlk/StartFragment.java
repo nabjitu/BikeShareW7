@@ -54,15 +54,15 @@ public class StartFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if ((newWhat.getText().length()>0) && (newWhere.getText().length()>0 )){
-                    last.setMbikeName(newWhat.getText().toString().trim());
-                    last.setMstartRide(newWhere.getText().toString().trim());
+                    //last.setMbikeName(newWhat.getText().toString().trim());
+                    //last.setMstartRide(newWhere.getText().toString().trim());
 
                     //Isetdet for HFM
                     //add til databasen og i main activty set current til den sidst addede i databasen.
                     Ride newRide = new Ride (newWhat.getText().toString().trim(), newWhere.getText().toString().trim(), "", 0);
 
 
-                    realm.writeRideToDB( newRide);
+                    realm.writeToDB(newRide.getMbikeName(), newRide.getMstartRide(), "");
 
                     //HFM
                     /*Intent data=new Intent();

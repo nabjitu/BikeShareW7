@@ -52,6 +52,7 @@ public class EndFragment extends Fragment {
         newWhere = (TextView) v.findViewById(R.id.where_edit_end);
 
         final Ride newRide = realm.getLastAdded();
+        System.out.println("Adding end... LastAdded is: " + newRide.getMbikeName() + " " + newRide.getMendRide() + newRide.getId());
 
         if (newRide.getMendRide().equals("")) {
             newWhat.setText(newRide.getMbikeName());

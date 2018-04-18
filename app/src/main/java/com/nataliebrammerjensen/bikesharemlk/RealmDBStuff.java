@@ -20,7 +20,7 @@ import io.realm.RealmResults;
 public class RealmDBStuff extends Observable {
     private static RealmDBStuff sRidesDB;
     static Realm realm ;
-    //realm = Realm.getDefaultInstance();
+    //realm = Realm.getDefaultInstance(); //Malik siger mp ikke være der.
 
     public RealmDBStuff(Context context){
         Log.d("create","db");
@@ -29,6 +29,7 @@ public class RealmDBStuff extends Observable {
     public static RealmDBStuff get(Context c) {
         if (sRidesDB == null) {
             sRidesDB= new RealmDBStuff(c);
+            realm.init(c); //Tilføjet efter maliks hjælp. SKal nok slettes.
             realm=Realm.getDefaultInstance();
         }
         return sRidesDB;
@@ -71,13 +72,18 @@ public class RealmDBStuff extends Observable {
         realm.commitTransaction();
     }
 
-    public void writeToDB(final String bikeName, final String startRide){
+    //Works
+    public void writeToDB(final String bikeName, final String startRide, final String endRide){
+        final int id  = getSizeOfDB();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
                 Ride ride = bgRealm.createObject(Ride.class);
+                System.out.println("Creating Ride object in REalm: with name: " + bikeName + " and id " + id);
+                ride.setId(id);
                 ride.setMbikeName(bikeName);
                 ride.setMstartRide(startRide);
+                ride.setMendRide(startRide);
             }
         },  new Realm.Transaction.OnSuccess() {
             @Override
@@ -95,6 +101,7 @@ public class RealmDBStuff extends Observable {
         });
     }
 
+    //Doesn't work
     public void writeRideToDB(final Ride rideIn){
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
@@ -136,12 +143,15 @@ public class RealmDBStuff extends Observable {
     public Ride getLastAdded(){
 
         final Ride result=new Ride();
+        final int max = getSizeOfDB();
         realm.executeTransaction(new Realm.Transaction() {
             @Override
             public void execute(Realm realm) {
                // Number maxId = realm.where(Ride.class).max("mId");
                 //Integer max = maxId.intValue();
-                Ride rea = realm.where(Ride.class).equalTo("mId", 12).findFirst();
+                RealmResults<Ride> realmResult = realm.where(Ride.class).equalTo("mId", max).findAll();
+                Ride rea = realmResult.get(0);
+                System.out.println("getLastAdded = Ride: " + rea.getMbikeName() + " " + rea.getId());
                 result.setId(rea.getId());
                 result.setMstartRide(rea.getMstartRide());
                 result.setMendRide(rea.getMendRide());
@@ -161,40 +171,6 @@ public class RealmDBStuff extends Observable {
         });
     }
 
-    public void writeUserToDb(final User userIn){
-        realm.executeTransactionAsync(new Realm.Transaction() {
-            @Override
-            public void execute(Realm bgRealm) {
-                //Increment ID
-                Number currentIdNum = realm.where(User.class).max("mId");
-                int nextId;
-                if(currentIdNum == null) {
-                    nextId = 1;
-                } else {
-                    nextId = currentIdNum.intValue() + 1;
-                }
-
-                User user = bgRealm.createObject(User.class);
-                user.setId(nextId);
-                user.setUserName(userIn.getUserName());
-                user.setPassword(userIn.getPassword());
-                //user.setOwnsBikeNamed(userIn.getOwnsBikeNamed());
-            }
-        },  new Realm.Transaction.OnSuccess() {
-            @Override
-            public void onSuccess() {
-                //Transaction was a success.
-                Log.v("Database", "Data Inserted");
-            }
-        }, new Realm.Transaction.OnError() {
-            @Override
-            public void onError(Throwable error) {
-                //TRansaction failed and was automaticcaly cancelled
-                Log.e("Database", error.getMessage());
-
-            }
-        });
-    }
 
     public User lookForUserInRealm(String enteredUsername, String enteredPassword){
         User foundUser = realm.where(User.class).equalTo("username", enteredUsername).findFirst();
@@ -242,6 +218,114 @@ public class RealmDBStuff extends Observable {
             }
         });
     }
+
+    public int getSizeOfDB(){
+        ArrayList<Ride> allRides = new ArrayList<>();
+        allRides = getDataWithoutWhereClause();
+        return allRides.size();
+    }
+
+    //====== User======
+
+    public ArrayList<User> getAllUsersWithoutWhereClause() {
+        //realm.execute transaction can subvstute begin and commit trandsaction.
+        RealmResults<User> users = realm.where(User.class).findAll();
+        ArrayList<User> result = new ArrayList<>();
+        realm.beginTransaction();
+        for (User user : users) {
+            result.add(user);
+        }
+        realm.commitTransaction();
+        return result;
+    }
+
+    public int getSizeOfUserDB(){
+        ArrayList<User> allUsers = new ArrayList<>();
+        allUsers = getAllUsersWithoutWhereClause();
+        return allUsers.size();
+    }
+
+    public void writeUserDataToDb(final String mUserName, final String mPassword){
+        //final int id  = getSizeOfUserDB();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                User user = bgRealm.createObject(User.class);
+                System.out.println("Creating User object in REalm: with name: " + mUserName + " and id " /*+ id*/);
+                //user.setId(id);
+                user.setUserName(mUserName);
+                user.setPassword(mPassword);
+                user.setCredit(100);
+            }
+        },  new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                //Transaction was a success.
+                Log.v("Database", "Data Inserted");
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                //TRansaction failed and was automaticcaly cancelled
+                Log.e("Database", error.getMessage());
+
+            }
+        });
+
+    }
+
+
+
+    //====== Bike ======
+
+    public ArrayList<Bike> getAllBikesWithoutWhereClause() {
+        //realm.execute transaction can subvstute begin and commit trandsaction.
+        RealmResults<Bike> rides = realm.where(Bike.class).findAll();
+        ArrayList<Bike> result = new ArrayList<>();
+        realm.beginTransaction();
+        for (Bike bike : rides) {
+            result.add(bike);
+        }
+        realm.commitTransaction();
+        return result;
+    }
+
+    public int getSizeOfBikeDB(){
+        ArrayList<Bike> allBikes = new ArrayList<>();
+        allBikes = getAllBikesWithoutWhereClause();
+        return allBikes.size();
+    }
+
+    public void writeBikeDataToDb(final String mBikeName, final String ownerName, final String brand){
+        final int id  = getSizeOfBikeDB();
+        realm.executeTransactionAsync(new Realm.Transaction() {
+            @Override
+            public void execute(Realm bgRealm) {
+                Bike bike = bgRealm.createObject(Bike.class);
+                System.out.println("Creating Bike object in REalm: with name: " + mBikeName + " and id " + id);
+                bike.setId(id);
+                bike.setName(mBikeName);
+                bike.setOwner(ownerName);
+                bike.setAvailable(true);
+                bike.setBrand(brand);
+            }
+        },  new Realm.Transaction.OnSuccess() {
+            @Override
+            public void onSuccess() {
+                //Transaction was a success.
+                Log.v("Database", "Data Inserted");
+            }
+        }, new Realm.Transaction.OnError() {
+            @Override
+            public void onError(Throwable error) {
+                //TRansaction failed and was automaticcaly cancelled
+                Log.e("Database", error.getMessage());
+
+            }
+        });
+
+    }
+
 
     //HFM
     /*
