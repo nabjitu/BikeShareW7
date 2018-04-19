@@ -49,6 +49,10 @@ public class LoginActivity extends AppCompatActivity {
 
         //== Fragments is a bicth==
 
+        //Følgende to linjer vigtige er meget vigtige for "manin/loginactivity" for ar realm virker. Ellers er relam null.
+        Realm.init(getApplicationContext());
+        rdb = RealmDBStuff.get(getApplicationContext());
+
         loginBtn = (Button) findViewById(R.id.login_button);
         usernameTV = (TextView) findViewById(R.id.login_username);
         passwordTV =(TextView) findViewById(R.id.login_password);
@@ -62,10 +66,11 @@ public class LoginActivity extends AppCompatActivity {
                     username = usernameTV.getText().toString().trim();
                     password = passwordTV.getText().toString().trim();
 
-                    User foundUser = rdb.lookForUserInRealm(username, password);
+                    User foundUser = rdb.lookForUserInRealm(username);
 
                     if(foundUser != null){
-
+                        LoginCredentials lc = LoginCredentials.get(getApplicationContext());
+                        lc.setUsername(username);
                         Intent toy = new Intent(LoginActivity.this, MainActivity.class);
                         toy.putExtra(TAG, username);
                         startActivity(toy);

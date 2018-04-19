@@ -57,7 +57,7 @@ public class LoginFragment extends Fragment{
                     username = usernameTV.getText().toString().trim();
                     password = passwordTV.getText().toString().trim();
 
-                    User foundUser = rdb.lookForUserInRealm(username, password);
+                    User foundUser = rdb.lookForUserInRealm(username);
 
                     if(foundUser != null){
 

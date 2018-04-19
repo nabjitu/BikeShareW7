@@ -24,6 +24,8 @@ public class MainActivity extends AppCompatActivity /*extends Activity*/{ // GUI
 
     private static final String TAG = "MainActivity";
 
+    public TextView welcomeTV;
+
     //Go to other activity
     public Button GoToStart;
     public Button GoToEnd;
@@ -52,13 +54,14 @@ public class MainActivity extends AppCompatActivity /*extends Activity*/{ // GUI
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        Realm.init(getApplicationContext()); //Skal måske slettes?
+        //Følgende skal være der hvis main Activity er statskærm.
+       /* Realm.init(getApplicationContext()); //Skal måske slettes?
         //realm = Realm.getDefaultInstance();
-        rdb = RealmDBStuff.get(getApplicationContext());
+        rdb = RealmDBStuff.get(getApplicationContext());*/
 
         Log.d(TAG, "onCreate(Bundle) called");
 
-        //DEbug
+        /*//DEbug
         //rdb.writeToDB("Natalie", "ITU", "");
         ArrayList<Ride> allRides = new ArrayList<>();
         allRides = rdb.getDataWithoutWhereClause();
@@ -70,16 +73,23 @@ public class MainActivity extends AppCompatActivity /*extends Activity*/{ // GUI
             System.out.println("Bike name is: " + r.getMbikeName());
             System.out.println("id is: " + r.getId());
         }
-        //DEbug
+        //DEbug*/
 
-
-        //Her sørger den for at sql databasen bliver lavet.
-        //rSqlDb = RidesDB.get(getApplicationContext());
-
+        welcomeTV = (TextView) findViewById(R.id.welcome);
         currentRideView=(TextView) findViewById(R.id.current);;
         buckysAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, rideListStrings);
         buckysAdapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, rideDates);
         buckysAdapter3 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, rideTimes);
+
+
+        //set welcomemessage on homescreen
+        /*Intent intent = getIntent();
+        String username = intent.getDataString();*/
+        LoginCredentials lc = LoginCredentials.get(getApplicationContext());
+        String username = lc.getLoggedInUsername();
+        System.out.println("Intent ekstra data is: " + username);
+        String welcomeMessage = "Welcome " + username;
+        welcomeTV.setText(welcomeMessage);
 
         showListOfRides = (Button) findViewById(R.id.list_rides_button);
         showListOfRides.setOnClickListener(new View.OnClickListener() {

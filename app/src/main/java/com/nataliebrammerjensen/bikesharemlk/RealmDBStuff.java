@@ -20,7 +20,7 @@ import io.realm.RealmResults;
 public class RealmDBStuff extends Observable {
     private static RealmDBStuff sRidesDB;
     static Realm realm ;
-    //realm = Realm.getDefaultInstance(); //Malik siger mp ikke være der.
+    //realm = realm.getDefaultInstance(); //Malik siger mp ikke være der.
 
     public RealmDBStuff(Context context){
         Log.d("create","db");
@@ -29,8 +29,8 @@ public class RealmDBStuff extends Observable {
     public static RealmDBStuff get(Context c) {
         if (sRidesDB == null) {
             sRidesDB= new RealmDBStuff(c);
-            realm.init(c); //Tilføjet efter maliks hjælp. SKal nok slettes.
-            realm=Realm.getDefaultInstance();
+            //realm.init(c); //Tilføjet efter maliks hjælp. SKal nok slettes.
+            realm = Realm.getDefaultInstance();
         }
         return sRidesDB;
     }
@@ -171,17 +171,6 @@ public class RealmDBStuff extends Observable {
         });
     }
 
-
-    public User lookForUserInRealm(String enteredUsername, String enteredPassword){
-        User foundUser = realm.where(User.class).equalTo("username", enteredUsername).findFirst();
-        if(foundUser != null){
-            return foundUser;
-        }
-        else {
-            return null;
-        }
-    }
-
     //One user can have one bike. Only the bike knows who its owner / user is.
     //Should be this way: One bike can only have 1 owner. But one User can have multiple bikes. Therefore bike has the the owner / User attribute. User donøt know which bike is related.
     public void writeBikeToDb(final Bike bikeIn){
@@ -247,6 +236,7 @@ public class RealmDBStuff extends Observable {
 
     public void writeUserDataToDb(final String mUserName, final String mPassword){
         //final int id  = getSizeOfUserDB();
+        //realm = Realm.getDefaultInstance();
         realm.executeTransactionAsync(new Realm.Transaction() {
             @Override
             public void execute(Realm bgRealm) {
@@ -272,6 +262,16 @@ public class RealmDBStuff extends Observable {
             }
         });
 
+    }
+
+    public User lookForUserInRealm(String enteredUsername){
+        User foundUser = realm.where(User.class).equalTo("mUserName", enteredUsername).findFirst();
+        if(foundUser != null){
+            return foundUser;
+        }
+        else {
+            return null;
+        }
     }
 
 

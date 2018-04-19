@@ -60,12 +60,12 @@ public class RegisterUserActivity extends AppCompatActivity {
 
                 final String bName = bikeName.getText().toString();
                 final String bBrand = bikeBrand.getText().toString();
-                final String bPrice = bikeBrand.getText().toString();
+                final String bPrice = bikePrice.getText().toString();
 
-                Integer price = 0;
+                Double price = 0.0;
 
                 try{
-                    price = Integer.parseInt(bPrice);
+                    price = Double.parseDouble(bPrice);
                 } catch (Exception e){
                     Toolbox.doToast("Price has to be of type double", getApplicationContext());
                     e.printStackTrace();
@@ -79,7 +79,28 @@ public class RegisterUserActivity extends AppCompatActivity {
                     Toolbox.doToast("v2 Price has to be of type double", getApplicationContext());
                 }
 
-                rdb.writeUserDataToDb(newUser.getUserName(), newUser.getPassword());
+
+                //I need unique userneames. Therefor i check if the entered username already exist. If it don't user can be created.
+                boolean userExist=  false;
+                if(rdb.lookForUserInRealm(username)!=null){
+                    userExist = true;
+                }
+
+                System.out.println("user Exist" + userExist);
+
+                if(!userExist) {
+                    try {
+                        rdb.writeUserDataToDb(newUser.getUserName(), newUser.getPassword());
+                        Toolbox.doToast("User was created", getApplicationContext());
+                        finish();
+
+                    } catch (Exception e) {
+                        Toolbox.doToast("Realm ERROR User was NOT created", getApplicationContext());
+                        e.printStackTrace();
+                    }
+                } else{
+                    Toolbox.doToast("username allready exist", getApplicationContext());
+                }
                     /*if() {
                         Toolbox.doToast("User was not created", getApplicationContext());
                     }
