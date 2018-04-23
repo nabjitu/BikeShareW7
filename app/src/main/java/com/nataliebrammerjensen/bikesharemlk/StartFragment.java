@@ -10,6 +10,7 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.nataliebrammerjensen.bikesharemlk.database.Ride;
+import com.nataliebrammerjensen.bikesharemlk.database.User;
 
 import io.realm.Realm;
 
@@ -57,18 +58,21 @@ public class StartFragment extends Fragment {
                     //last.setMbikeName(newWhat.getText().toString().trim());
                     //last.setMstartRide(newWhere.getText().toString().trim());
 
-                    //Isetdet for HFM
                     //add til databasen og i main activty set current til den sidst addede i databasen.
                     Ride newRide = new Ride (newWhat.getText().toString().trim(), newWhere.getText().toString().trim(), "", 0);
 
 
                     realm.writeToDB(newRide.getMbikeName(), newRide.getMstartRide(), "");
 
-                    //HFM
-                    /*Intent data=new Intent();
-                    //data.setData(Uri.parse(last.toStringStart()));
-                    data.setData(Uri.parse(newRide.getId().toString()));
-                    getActivity().setResult(RESULT_OK, data);*/
+                    //News poseudocode
+                    /*User renter = realm.lookForUserInRealm(renterUser);
+                    User lenter = realm.lookForUserInRealm(lenterUser);
+
+                    //Take money from renter and give to lenter.
+                    double lenterStartCredit = renter.getCredit();
+                    double lenterEndCredit = lenterStartCredit - pricePrHour;
+                    renter.setCredit();
+                    //pseodo*/
 
                     // reset text fields
                     newWhat.setText(""); newWhere.setText("");
